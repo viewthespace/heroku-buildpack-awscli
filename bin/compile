@@ -14,9 +14,36 @@ function indent() {
 AWS_CLI_URL="https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
 
 BUILD_DIR=$1
+ENV_DIR=$3
 BUILDPACK_DIR="$(dirname $(dirname $0))"
 INSTALL_DIR="/app/.awscli"
 TMP_DIR=$(mktemp -d)
+
+echo "-----> Checking env vars"
+if [ -f ${ENV_DIR}/ASSETS_AWS_ACCESS_KEY_ID ]; then
+  export ASSETS_AWS_ACCESS_KEY_ID="$(cat ${ENV_DIR}/ASSETS_AWS_ACCESS_KEY_ID)"
+else
+  echo "ASSETS_AWS_ACCESS_KEY_ID not set, skipping S3 asset sync" |& indent
+  exit 0
+fi
+if [ -f ${ENV_DIR}/ASSETS_AWS_SECRET_ACCESS_KEY ]; then
+  export ASSETS_AWS_SECRET_ACCESS_KEY="$(cat ${ENV_DIR}/ASSETS_AWS_SECRET_ACCESS_KEY)"
+else
+  echo "ASSETS_AWS_SECRET_ACCESS_KEY not set, skipping S3 asset sync" |& indent
+  exit 0
+fi
+if [ -f ${ENV_DIR}/ASSETS_AWS_S3_BUCKET ]; then
+  export ASSETS_AWS_S3_BUCKET="$(cat ${ENV_DIR}/ASSETS_AWS_S3_BUCKET)"
+else
+  echo "ASSETS_AWS_S3_BUCKET not set, skipping S3 asset sync" |& indent
+  exit 0
+fi
+if [ -f ${ENV_DIR}/ASSETS_LOCAL_PATH ]; then
+  export ASSETS_LOCAL_PATH="$(cat ${ENV_DIR}/ASSETS_LOCAL_PATH)"
+else
+  echo "ASSETS_LOCAL_PATH not set, skipping S3 asset sync" |& indent
+  exit 0
+fi
 
 echo "-----> Downloading AWS CLI"
 curl --silent --show-error --fail -o "${TMP_DIR}/awscliv2.zip" "${AWS_CLI_URL}" |& indent
