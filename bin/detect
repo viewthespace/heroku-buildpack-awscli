@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 # bin/detect <build-dir>
 
-echo 'AWS CLI'
+echo 'S3 asset sync'
 exit 0
