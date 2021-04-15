@@ -73,7 +73,11 @@ ${AWS} configure set aws_access_key_id ${ASSETS_AWS_ACCESS_KEY_ID}
 ${AWS} configure set aws_secret_access_key ${ASSETS_AWS_SECRET_ACCESS_KEY}
 
 echo "-----> Uploading ${ASSETS_LOCAL_PATH} to ${ASSETS_AWS_S3_BUCKET}"
-${AWS} s3 sync ${ASSETS_LOCAL_PATH} s3://${ASSETS_AWS_S3_BUCKET}
+if [[ ! -d "${BUILD_DIR}/${ASSETS_LOCAL_PATH}" ]]; then
+  echo "${BUILD_DIR}/${ASSETS_LOCAL_PATH} does not exist, skipping S3 asset sync" |& indent
+  exit 0
+fi
+${AWS} s3 sync "${BUILD_DIR}/${ASSETS_LOCAL_PATH}" "s3://${ASSETS_AWS_S3_BUCKET}"
 
 echo "-----> Removing AWS CLI and temporary files"
 rm -rf "${TMP_DIR}"
