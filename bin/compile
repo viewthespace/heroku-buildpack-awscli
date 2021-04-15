@@ -38,17 +38,16 @@ if [[ "${BUILD_DIR}" != /app ]]; then
 fi
 
 "${TMP_DIR}/aws/install" --install-dir "${INSTALL_DIR}/aws-cli" --bin-dir "${INSTALL_DIR}/bin" |& indent
-/app/.awscli/bin/aws --version |& indent
+AWS="/app/.awscli/bin/aws"
+${AWS} --version |& indent
 
-mkdir -p "${BUILD_DIR}/.profile.d"
-cat > "${BUILD_DIR}/.profile.d/awscli.sh" <<'PROFILE'
-export PATH="/app/.awscli/bin:${PATH}"
-PROFILE
+echo "-----> Configuring AWS CLI credentials"
+${AWS} configure set aws_access_key_id ${ASSETS_AWS_ACCESS_KEY_ID}
+${AWS} configure set aws_secret_access_key ${ASSETS_AWS_SECRET_ACCESS_KEY}
 
-cat > "${BUILDPACK_DIR}/export" <<'EXPORT'
-export PATH="/app/.awscli/bin:${PATH}"
-EXPORT
+echo "-----> Uploading ${ASSETS_LOCAL_PATH} to ${ASSETS_AWS_S3_BUCKET}"
+${AWS} s3 sync ${ASSETS_LOCAL_PATH} s3://${ASSETS_AWS_S3_BUCKET}
 
+echo "-----> Removing AWS CLI and temporary files"
 rm -rf "${TMP_DIR}"
-
-echo "-----> Successfully installed AWS CLI"
+rm -rf "${INSTALL_DIR}"

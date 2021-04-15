@@ -1,16 +1,17 @@
-Heroku buildpack for the AWS CLI
-================================
+# heroku-buildpack-s3-asset-sync
 
-This is a [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks)
-that allows one to run AWS CLI in a dyno alongside application code.
+This buildpack allows uploading a local directory to an S3 bucket during slug
+compilation.
 
-Usage
------
+It is based on the [AWS CLI buildpack](https://github.com/heroku/heroku-buildpack-awscli).
+
+## Usage
 
 Example usage:
 
-    $ heroku buildpacks:add heroku-community/awscli
+    $ heroku buildpacks:add https://github.com/viewthespace/heroku-buildpack-s3-asset-sync.git
 
-    $ heroku config:add AWS_ACCESS_KEY_ID=<aws-access-key>
-    $ heroku config:add AWS_SECRET_ACCESS_KEY=<aws-secret-access-key>
-    $ heroku config:add AWS_DEFAULT_REGION=<default-aws-region>
+    $ heroku config:add ASSETS_AWS_ACCESS_KEY_ID=<aws-access-key>
+    $ heroku config:add ASSETS_AWS_SECRET_ACCESS_KEY=<aws-secret-access-key>
+    $ heroku config:add ASSETS_AWS_S3_BUCKET=my-bucket
+    $ heroku config:add ASSETS_LOCAL_PATH=public/
